@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <string.h>
+
+int binarySearch(char books[][100], int left, int right, const char* target) {
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+
+      
+        int cmp = strcmp(books[mid], target);
+
+
+        if (cmp == 0) {
+            return mid; 
+        }
+        
+    
+        if (cmp < 0) {
+            left = mid + 1;
+        } 
+       
+        else {
+            right = mid - 1;
+        }
+    }
+    return -1; 
+}
+
+int main() {
+
+    char books[][100] = {
+        "A Brief History of Time",
+        "C Programming Language",
+        "Data Structures and Algorithms",
+        "Introduction to Algorithms",
+        "The Great Gatsby",
+        "The Lord of the Rings",
+        "The Catcher in the Rye"
+    };
+    
+    int numBooks = sizeof(books) / sizeof(books[0]);  
+    char target[100];
+
+   
+    printf("Enter the book title to search for: ");
+    fgets(target, sizeof(target), stdin);
+    target[strcspn(target, "\n")] = 0; 
+
+  
+    int result = binarySearch(books, 0, numBooks - 1, target);
+
+    if (result != -1) {
+        printf("Book found at index: %d\n", result);
+    } else {
+        printf("Book not found in the library.\n");
+    }
+
+    return 0;
+}
