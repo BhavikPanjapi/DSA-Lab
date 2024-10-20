@@ -1,0 +1,172 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        printf("Memory allocation error\n");
+        exit(0);
+    }
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+struct Node* insert(struct Node* root, int value) {
+    if (root == NULL) {
+        root = createNode(value);  // If tree is empty, create a new node
+    } else if (value < root->data) {
+        root->left = insert(root->left, value);  // Insert in the left subtree
+    } else if (value > root->data) {
+        root->right = insert(root->right, value);  // Insert in the right subtree
+    }
+    return root;
+}
+
+
+struct Node* findMin(struct Node* root) {
+    while (root->left != NULL)
+        root = root->left;
+    return root;
+}
+
+struct Node* deleteNode(struct Node* root, int value) {
+    if (root == NULL) {
+        printf("Value not found in the tree.\n");
+        return root;
+    }
+
+   
+    if (value < root->data) {
+        root->left = deleteNode(root->left, value);
+    } else if (value > root->data) {
+        root->right = deleteNode(root->right, value);
+    } else {
+     
+
+        if (root->left == NULL && root->right == NULL) {
+            free(root);
+            root = NULL;
+        }
+      
+        else if (root->left == NULL) {
+            struct Node* temp = root;
+            root = root->right;
+            free(temp);
+        } else if (root->right == NULL) {
+            struct Node* temp = root;
+            root = root->left;
+            free(temp);
+        }
+      
+        else {
+            struct Node* temp = findMin(root->right);  // Find the minimum node in the right subtree
+            root->data = temp->data;  // Replace the data
+            root->right = deleteNode(root->right, temp->data);  // Delete the duplicate node
+        }
+    }
+    return root;
+}
+
+
+struct Node* search(struct Node* root, int value) {
+    if (root == NULL || root->data == value)
+        return root;
+    if (value < root->data)
+        return search(root->left, value);
+    return search(root->right, value);
+}
+
+void inorderTraversal(struct Node* root) {
+    if (root != NULL) {
+        inorderTraversal(root->left);
+        printf("%d ", root->data);
+        inorderTraversal(root->right);
+    }
+}
+
+
+void preorderTraversal(struct Node* root) {
+    if (root != NULL) {
+        printf("%d ", root->data);
+        preorderTraversal(root->left);
+        preorderTraversal(root->right);
+    }
+}
+
+
+void postorderTraversal(struct Node* root) {
+    if (root != NULL) {
+        postorderTraversal(root->left);
+        postorderTraversal(root->right);
+        printf("%d ", root->data);
+    }
+}
+
+int main() {
+    struct Node* root = NULL;
+    int choice, value;
+
+    while (1) {
+        printf("\nMenu:\n");
+        printf("1. Insert\n");
+        printf("2. Delete\n");
+        printf("3. Search\n");
+        printf("4. Inorder Traversal\n");
+        printf("5. Preorder Traversal\n");
+        printf("6. Postorder Traversal\n");
+        printf("7. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                root = insert(root, value);
+                break;
+            case 2:
+                printf("Enter value to delete: ");
+                scanf("%d", &value);
+                root = deleteNode(root, value);
+                break;
+            case 3:
+                printf("Enter value to search: ");
+                scanf("%d", &value);
+                struct Node* foundNode = search(root, value);
+                if (foundNode != NULL)
+                    printf("Value %d found in the tree.\n", value);
+                else
+                    printf("Value %d not found in the tree.\n", value);
+                break;
+            case 4:
+                printf("Inorder Traversal: ");
+                inorderTraversal(root);
+                printf("\n");
+                break;
+            case 5:
+                printf("Preorder Traversal: ");
+                preorderTraversal(root);
+                printf("\n");
+                break;
+            case 6:
+                printf("Postorder Traversal: ");
+                postorderTraversal(root);
+                printf("\n");
+                break;
+            case 7:
+                exit(0);
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+
+    return 0;
+}
